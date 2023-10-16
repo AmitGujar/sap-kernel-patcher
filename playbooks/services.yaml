@@ -1,0 +1,10 @@
+- name: Restarting sap services
+  hosts: sap_servers
+  become: true
+  become_user: qbxadm
+
+  tasks:
+    - name: Starting stopped services
+      ansible.builtin.import_role:
+        name: kernel_upgrade
+        tasks_from: services.yaml

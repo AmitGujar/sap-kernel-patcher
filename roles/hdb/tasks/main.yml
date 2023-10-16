@@ -1,0 +1,9 @@
+- name: Starting HDB
+  ansible.builtin.shell:
+    cmd: "source {{ sapenv }} && /bin/csh -c 'setenv {{ setenv }}'"
+  register: database_status
+  changed_when: false
+
+- name: Waiting for HDB to start
+  ansible.builtin.meta: end_play
+  when: database_status.rc == 0

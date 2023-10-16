@@ -1,0 +1,21 @@
+- name: SAP kernel upgrade
+  hosts: sap_servers
+  become: true
+  become_user: qbxadm
+
+  vars_prompt:
+    - name: ascs_service
+      prompt: "Enter the ASCS service name to stop "
+      private: false
+
+    - name: db_service
+      prompt: "Enter the DB service to stop "
+      private: false
+
+  roles:
+    - kernel_upgrade
+
+  tasks:
+    - name: Upgrading kernel
+      ansible.builtin.import_role:
+        name: kernel_upgrade

@@ -1,0 +1,10 @@
+- name: Set user ID bit on files
+  ansible.builtin.command:
+    cmd: "sudo chmod u+s {{ item }}"
+  with_items:
+    - "{{ user_bit_path }}/SYS/exe/uc/linuxx86_64/icmbnd.new"
+    - "{{ user_bit_path }}/D10/exe/sapuxuserchk"
+    - "{{ user_bit_path }}/ASCS11/exe/sapuxuserchk"
+    - "{{ user_bit_path }}/arch/content-server/SBX/2020/2020/Kernel_100/sapuxuserchk"
+  changed_when: false
+  no_log: false

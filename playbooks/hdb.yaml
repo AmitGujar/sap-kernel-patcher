@@ -1,0 +1,12 @@
+- name: HDB database start
+  hosts: sap_servers
+  become: true
+  become_user: hdbadm
+
+  roles:
+    - hdb
+
+  tasks:
+    - name: Starting database
+      ansible.builtin.import_role:
+        name: hdb

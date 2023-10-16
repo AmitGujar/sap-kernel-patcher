@@ -1,0 +1,75 @@
+- name: Removing Existing Backup
+  ansible.builtin.command:
+    cmd: "rm -rf \"{{ kernal_location }}_backup\""
+  register: delete_backup
+  changed_when: false
+
+- name: Generating backup of current kernal
+  ansible.builtin.command:
+    cmd: "cp -r \"{{ kernal_location }}\" \"{{ kernal_location }}_backup\""
+  register: backup_kernal
+  changed_when: false
+
+- name: Backup of current kernal generated
+  ansible.builtin.debug:
+    msg: "Backup is successful at {{ kernal_location }}_backup"
+  when: backup_kernal.rc == 0
+
+- name: Getting kernel info
+  ansible.builtin.shell:
+    cmd: "set -o pipefail && export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/disp+work | grep release"
+  register: kernel_version_output
+  changed_when: false
+
+- name: Displaying kernal info
+  ansible.builtin.debug:
+    msg: "{{ kernel_version_output.stdout }}"
+
+- name: Stopping Service "{{ ascs_service }}"
+  ansible.builtin.shell:
+    cmd: "export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/sapcontrol -nr {{ ascs_service }} -function Stop"
+  register: stop_sap_service_10
+  changed_when: false
+
+- name: Service Status \"{{ ascs_service }}\"
+  ansible.builtin.debug:
+    msg: "{{ stop_sap_service_10.stdout }}"
+
+- name: Stopping Service "{{ db_service }}"
+  ansible.builtin.shell:
+    cmd: "export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/sapcontrol -nr {{ db_service }} -function Stop"
+  register: stop_sap_service_11
+  changed_when: false
+
+- name: SAP Service Status "{{ db_service }}"
+  ansible.builtin.debug:
+    msg: "{{ stop_sap_service_11.stdout }}"
+
+- name: Extracting kernal files
+  ansible.builtin.shell: |
+    cd "{{ download_location }}"&&
+    ./SAPCAR_1115-70006178.EXE -xvf SAPEXE_300-80005374.SAR -R "{{ kernal_location }}"&&
+    ./SAPCAR_1115-70006178.EXE -xvf SAPEXEDB_300-80005373.SAR -R "{{ kernal_location }}"
+  register: extract_kernal_files
+  notify: Set user ID bit on files
+  changed_when: false
+
+- name: Kernal files extracted
+  ansible.builtin.debug:
+    msg: "File extraction is successful"
+  when: extract_kernal_files.stdout is defined
+
+- name: Including tasks from userbit files
+  ansible.builtin.include_tasks: userbit.yaml
+  register: set_user_id_bit
+  no_log: true
+
+- name: Upgrading your kernel
+  ansible.builtin.shell:
+    cmd: "cd /usr/sap/QBX/SYS/exe/uc/ && sudo chown -R qbxadm:sapsys linuxx86_64 && sudo ./linuxx86_64/saproot.sh QBX"
+  register: kernel_upgrade
+  changed_when: false
+
+- name: Procedding with next task
+  ansible.builtin.meta: end_play
+  when: kernel_upgrade.rc == 0

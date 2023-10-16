@@ -1,0 +1,12 @@
+galaxy_info:
+  author: Amit Gujar
+  description: This role will start the database
+  company: xyz
+
+  license: MIT
+
+  min_ansible_version: "2.1"
+
+  galaxy_tags: []
+
+dependencies: []

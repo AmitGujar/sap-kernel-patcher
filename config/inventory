@@ -1,0 +1,6 @@
+[sap_servers]
+52.191.26.64 dbms_type=HDB
+
+[sap_servers:vars]
+ansible_user=root
+ansible_python_interpreter=/usr/bin/python3

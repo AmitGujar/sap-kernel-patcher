@@ -1,0 +1,4 @@
+---
+# vars file for hdb
+sapenv: /usr/sap/HDB/home/.sapenv.sh
+setenv: SAPSYSTEMNAME HDB && HDB start
