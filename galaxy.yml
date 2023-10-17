@@ -1,0 +1,37 @@
+namespace: amitgujar0
+
+name: sap_kernelpatcher
+
+version: 1.0.1
+
+readme: README.md
+
+authors:
+- Amit Gujar <amitgujar3342@gmail.com>
+
+description: This collection is used to patch the kernel
+
+license:
+- MIT
+
+tags: 
+- kernel
+- patcher
+- sap
+- hana
+- upgrade
+- bash
+
+dependencies: {}
+
+repository: https://github.com/AmitGujar/sap-kernel-patcher
+
+documentation: http://docs.example.com
+
+homepage: https://github.com/AmitGujar/sap-kernel-patcher
+
+issues: https://github.com/AmitGujar/sap-kernel-patcher/issues
+
+
+build_ignore:
+- secret.txt
