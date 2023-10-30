@@ -1,13 +1,14 @@
 - name: Removing Existing Backup
   ansible.builtin.command:
-    cmd: "rm -rf \"{{ kernal_location }}_backup\""
+    cmd: 'rm -rf "{{ kernal_location }}_backup"'
   register: delete_backup
   changed_when: false
 
 - name: Generating backup of current kernal
   ansible.builtin.command:
-    cmd: "cp -r \"{{ kernal_location }}\" \"{{ kernal_location }}_backup\""
+    cmd: 'cp -r "{{ kernal_location }}" "{{ kernal_location }}_backup"'
   register: backup_kernal
+  no_log: true
   changed_when: false
 
 - name: Backup of current kernal generated
@@ -17,7 +18,7 @@
 
 - name: Getting kernel info
   ansible.builtin.shell:
-    cmd: "set -o pipefail && export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/disp+work | grep release"
+    cmd: 'set -o pipefail && export LD_LIBRARY_PATH="{{ kernal_location }}" && "{{ kernal_location }}"/disp+work | grep release'
   register: kernel_version_output
   changed_when: false
 
@@ -27,7 +28,7 @@
 
 - name: Stopping Service "{{ ascs_service }}"
   ansible.builtin.shell:
-    cmd: "export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/sapcontrol -nr {{ ascs_service }} -function Stop"
+    cmd: 'export LD_LIBRARY_PATH="{{ kernal_location }}" && "{{ kernal_location }}"/sapcontrol -nr {{ ascs_service }} -function Stop'
   register: stop_sap_service_10
   changed_when: false
 
@@ -37,7 +38,7 @@
 
 - name: Stopping Service "{{ db_service }}"
   ansible.builtin.shell:
-    cmd: "export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/sapcontrol -nr {{ db_service }} -function Stop"
+    cmd: 'export LD_LIBRARY_PATH="{{ kernal_location }}" && "{{ kernal_location }}"/sapcontrol -nr {{ db_service }} -function Stop'
   register: stop_sap_service_11
   changed_when: false
 
@@ -45,13 +46,21 @@
   ansible.builtin.debug:
     msg: "{{ stop_sap_service_11.stdout }}"
 
+# - name: Extracting kernal files
+#   ansible.builtin.shell: |
+#     cd "{{ download_location }}"&&
+#     ./SAPCAR_1115-70006178.EXE -xvf SAPEXE_300-80005374.SAR -R "{{ kernal_location }}"&&
+#     ./SAPCAR_1115-70006178.EXE -xvf SAPEXEDB_300-80005373.SAR -R "{{ kernal_location }}"
+#   register: extract_kernal_files
+#   notify: Set user ID bit on files
+#   changed_when: false
+
 - name: Extracting kernal files
   ansible.builtin.shell: |
     cd "{{ download_location }}"&&
-    ./SAPCAR_1115-70006178.EXE -xvf SAPEXE_300-80005374.SAR -R "{{ kernal_location }}"&&
-    ./SAPCAR_1115-70006178.EXE -xvf SAPEXEDB_300-80005373.SAR -R "{{ kernal_location }}"
+    "./{{ download_sapcar }}" -xvf "{{ download_sapexe }}" -R "{{ kernal_location }}"&&
+    "./{{ download_sapcar }}" -xvf "{{ download_sapdbexe }}" -R "{{ kernal_location }}"
   register: extract_kernal_files
-  notify: Set user ID bit on files
   changed_when: false
 
 - name: Kernal files extracted
@@ -64,12 +73,40 @@
   register: set_user_id_bit
   no_log: true
 
+- name: Converting user into adm
+  ansible.builtin.shell: |
+    set -o pipefail
+    username_lower=$(echo "{{ sid_name }}" | tr '[:upper:]' '[:lower:]')
+    username_adm=$(echo "${username_lower}adm")
+    echo $username_adm
+  register: username_adm
+  changed_when: false
+
+
+- name: Debugging username_adm
+  ansible.builtin.debug:
+    msg: "{{ username_adm.stdout }}"
+
+
 - name: Upgrading your kernel
-  ansible.builtin.shell:
-    cmd: "cd /usr/sap/QBX/SYS/exe/uc/ && sudo chown -R qbxadm:sapsys linuxx86_64 && sudo ./linuxx86_64/saproot.sh QBX"
+  ansible.builtin.shell: |
+    cd /usr/sap/{{ sid_name }}/SYS/exe/uc/ &&
+    sudo chown -R {{ username_adm.stdout }}:sapsys linuxx86_64 &&
+    sudo ./linuxx86_64/saproot.sh {{ sid_name }} }}
   register: kernel_upgrade
   changed_when: false
 
+# - name: Upgrading your kernel
+#   ansible.builtin.shell:
+#     cmd: "cd /usr/sap/{{ user_name }}/SYS/exe/uc/ && sudo chown -R qbxadm:sapsys linuxx86_64 && sudo ./linuxx86_64/saproot.sh {{ user_name }} }}"
+#   register: kernel_upgrade
+#   changed_when: false
+
+- name: Executing services task
+  ansible.builtin.include_tasks:
+    file: services.yaml
+  register: services_start
+
 - name: Procedding with next task
   ansible.builtin.meta: end_play
-  when: kernel_upgrade.rc == 0
+  when: services_start.rc == 0

@@ -15,19 +15,19 @@
 
 - name: Starting service ASCS
   ansible.builtin.shell:
-    cmd: "export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/sapcontrol -nr 11 -function Start"
+    cmd: 'export LD_LIBRARY_PATH="{{ kernal_location }}" && "{{ kernal_location }}"/sapcontrol -nr 11 -function Start'
   register: start_sap_service11
   changed_when: false
 
 - name: Starting service DB
   ansible.builtin.shell:
-    cmd: "export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/sapcontrol -nr 10 -function Start"
+    cmd: 'export LD_LIBRARY_PATH="{{ kernal_location }}" && "{{ kernal_location }}"/sapcontrol -nr 10 -function Start'
   register: start_sap_service_10
   changed_when: false
 
 - name: Getting new kernel info
   ansible.builtin.shell:
-    cmd: "set -o pipefail && export LD_LIBRARY_PATH=\"{{ kernal_location }}\" && \"{{ kernal_location }}\"/disp+work | grep release"
+    cmd: 'set -o pipefail && export LD_LIBRARY_PATH="{{ kernal_location }}" && "{{ kernal_location }}"/disp+work | grep release'
   register: kernel_version_output_new
   changed_when: false
 

@@ -1,9 +1,11 @@
 - name: SAP kernel upgrade
   hosts: sap_servers
-  become: true
-  become_user: qbxadm
 
   vars_prompt:
+    - name: become_user
+      prompt: "Enter username in this format [qbxadm] "
+      private: false
+
     - name: ascs_service
       prompt: "Enter the ASCS service name to stop "
       private: false
@@ -12,6 +14,28 @@
       prompt: "Enter the DB service to stop "
       private: false
 
+    - name: download_location
+      prompt: "Enter the download location in this format [/hana/kernel] "
+      private: false
+
+    - name: download_sapcar
+      prompt: "Enter the SAPCAR.EXE file name in this format [SAPCAR_1115-70006178.EXE] "
+      private: false
+
+    - name: download_sapexe
+      prompt: "Enter the SAPEXE.SAR file name in this format [SAPEXE_300-80005374.SAR] "
+      private: false
+
+    - name: download_sapdbexe
+      prompt: "Enter the SAPDBEXE.SAR file name in this format [SAPEXEDB_300-80005373.SAR] "
+      private: false
+
+    - name: sid_name
+      prompt: "Enter the SID in this format[QBX/SBX] "
+      private: false
+
+  become: true
+  become_user: qbxadm
   roles:
     - kernel_upgrade
 

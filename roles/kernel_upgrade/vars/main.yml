@@ -1,6 +1,5 @@
-kernal_location: /usr/sap/QBX/SYS/exe/uc/linuxx86_64
-db_ld_library_path: /usr/sap/QBX/SYS/exe/run:/usr/sap/QBX/SYS/exe/uc/linuxx86_64:/usr/sap/QBX/hdbclient
-kernal_file: /hana/kernel/SAPEXE_200-80000935.SAR
-download_location: /hana/kernel
-user_bit_path: /usr/sap/QBX
-dir_library: /usr/sap/QBX/SYS/exe/run
+kernal_location: /usr/sap/{{ sid_name }}/SYS/exe/uc/linuxx86_64
+db_ld_library_path: /usr/sap/{{ sid_name }}/SYS/exe/run:/usr/sap/{{ sid_name }}/SYS/exe/uc/linuxx86_64:/usr/sap/{{ sid_name }}/hdbclient
+user_bit_path: /usr/sap/{{ sid_name }}
+dir_library: /usr/sap/{{ sid_name }}/SYS/exe/run
+path_to_linuxx86_64: /usr/sap/{{ sid_name }}/SYS/exe/uc/

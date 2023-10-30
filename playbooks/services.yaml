@@ -3,6 +3,11 @@
   become: true
   become_user: qbxadm
 
+  vars_prompt:
+    - name: sid_name
+      prompt: "Enter the SID to run the kernel upgrade [QBX/SBX]  "
+      private: false
+
   tasks:
     - name: Starting stopped services
       ansible.builtin.import_role:
