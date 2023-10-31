@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source $HOME/kernelPlaybooks/alert.sh
-
 start_upgrade() {
     ansible-playbook -i config/inventory playbooks/main.yaml
     if [ $? -ne 0 ]; then
@@ -23,6 +21,5 @@ start_upgrade() {
     #     fi
     fi
     echo "Kernel is upgraded on target machine"
-    set_alert "Kernel upgrade is successful ✅"
 }
 start_upgrade

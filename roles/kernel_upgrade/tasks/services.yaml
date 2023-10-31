@@ -35,5 +35,5 @@
   ansible.builtin.debug:
     msg: "{{ kernel_version_output_new.stdout }}"
 
-- name: Status is completed
-  ansible.builtin.meta: end_play
+# - name: Status is completed
+#   ansible.builtin.meta: end_play

@@ -2,7 +2,7 @@
 
 set_alert() {
 
-    curl -d "$1" http://20.219.177.208/home
+    curl -d "$1" ntfy.sh/cust0m_4nsible_9layb00k_Aler7
 }
 
 check_server() {
@@ -10,7 +10,7 @@ check_server() {
     ping 52.191.26.64 -c 3
 
     if [ $? -ne 0 ]; then
-        set_alert "Server is UP 🤩" >>/dev/null
+        set_alert "Server is UP 🤩"
     else
         echo "Server is not running 😭"
     fi
@@ -25,4 +25,4 @@ send_ping() {
         fi
     done
 }
-# send_ping
+send_ping

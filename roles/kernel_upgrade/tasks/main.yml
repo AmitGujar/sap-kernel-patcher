@@ -32,7 +32,7 @@
   register: stop_sap_service_10
   changed_when: false
 
-- name: Service Status \"{{ ascs_service }}\"
+- name: Service Status "{{ ascs_service }}"
   ansible.builtin.debug:
     msg: "{{ stop_sap_service_10.stdout }}"
 
@@ -107,6 +107,13 @@
     file: services.yaml
   register: services_start
 
+- name: Sending Alert
+  ansible.builtin.uri:
+    url: "{{ alert_url }}"
+    method: POST
+    body: "kernel upgrade is finished."
+  register: alert_sent
+
 - name: Procedding with next task
   ansible.builtin.meta: end_play
-  when: services_start.rc == 0
+  when: alert_sent.status == 200
