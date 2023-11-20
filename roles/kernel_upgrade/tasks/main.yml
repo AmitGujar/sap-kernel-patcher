@@ -96,24 +96,11 @@
   register: kernel_upgrade
   changed_when: false
 
-# - name: Upgrading your kernel
-#   ansible.builtin.shell:
-#     cmd: "cd /usr/sap/{{ user_name }}/SYS/exe/uc/ && sudo chown -R qbxadm:sapsys linuxx86_64 && sudo ./linuxx86_64/saproot.sh {{ user_name }} }}"
-#   register: kernel_upgrade
-#   changed_when: false
-
 - name: Executing services task
   ansible.builtin.include_tasks:
     file: services.yaml
   register: services_start
 
-- name: Sending Alert
-  ansible.builtin.uri:
-    url: "{{ alert_url }}"
-    method: POST
-    body: "kernel upgrade is finished."
-  register: alert_sent
-
 - name: Procedding with next task
   ansible.builtin.meta: end_play
-  when: alert_sent.status == 200
+  when: services_start.rc == 0

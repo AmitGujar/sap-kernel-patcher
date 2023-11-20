@@ -3,7 +3,7 @@
 
   vars_prompt:
     - name: become_user
-      prompt: "Enter username in this format [qbxadm] "
+      prompt: "Enter the user in this format [qbxadm/sbxadm] "
       private: false
 
     - name: ascs_service
@@ -35,7 +35,8 @@
       private: false
 
   become: true
-  become_user: qbxadm
+  become_user: "{{ become_user }}"
+
   roles:
     - kernel_upgrade
 

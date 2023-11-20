@@ -1,0 +1,10 @@
+exclude_paths:
+  - ./roles/db_query/defaults/main.yml
+
+skip_list:
+  - var-naming
+  - no-role-prefix
+  - octal-values
+
+warn_list:
+  - octal-values

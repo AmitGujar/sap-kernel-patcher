@@ -1,0 +1,7 @@
+hostname: sbxnew
+instance: 00
+tenant: SBX
+username: SAPHANADB
+password: verystrongpassword
+script_location: /usr/sap/HDB/HDB00/HANA_Disks_Data_Overview_2.00.030+.txt
+sid_name: HDB

@@ -1,0 +1,29 @@
+- name: Getting instance number
+  ansible.builtin.shell: |
+    echo "{{ '%02d' | format(instance | int) if instance == 00 else instance }}"
+  register: instance_number
+  changed_when: false
+
+- name: Instance output
+  ansible.builtin.debug:
+    msg: "{{ instance_number.stdout_lines }}"
+  changed_when: false
+
+- name: Executing the scripts from local pc
+  ansible.builtin.script:
+    script: "{{ script_location }}"
+    executable: /bin/sh
+
+
+- name: Executing the script
+  ansible.builtin.shell: |
+    export PATH=$PATH:/usr/sap/{{ sid_name }}/{{ sid_name }}{{ instance_number.stdout_lines[0] }}/exe &&
+    hdbsql -n {{ hostname }} -i {{ instance }} \
+    -d {{ tenant }} -u {{ username }} -p {{ password }} \
+    -I {{ script_location }}
+  changed_when: false
+  register: script_output
+
+- name: Printing the output of query
+  ansible.builtin.debug:
+    msg: "{{ script_output.stdout_lines }}"

@@ -1,0 +1,41 @@
+- name: HDB query execute
+  hosts: sapdb_servers
+
+  vars_prompt:
+    - name: become_user
+      prompt: "Enter HANA DB instance SID in this format [hdbadm] "
+      private: false
+
+    - name: sid_name
+      prompt: "Enter HANA DB instance SID in this format [HDB] "
+      private: false
+
+    - name: hostname
+      prompt: "Enter HANA DB hostname "
+      private: false
+
+    - name: instance
+      prompt: "Enter HANA DB instance number "
+      private: false
+
+    - name: tenant
+      prompt: "Enter HANA DB tenant name "
+      private: false
+
+    - name: username
+      prompt: "Enter HANA DB username "
+      private: false
+
+    - name: password
+      prompt: "Enter HANA DB password "
+      private: false
+
+    - name: script_location
+      prompt: "Enter HANA DB script location "
+      private: false
+
+  become: true
+  become_user: "{{ become_user }}"
+
+  roles:
+    - db_query
