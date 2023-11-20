@@ -4,3 +4,10 @@
 [sap_servers:vars]
 ansible_user=root
 ansible_python_interpreter=/usr/bin/python3
+
+[sapdb_servers]
+20.232.25.37
+
+[sapdb_servers:vars]
+ansible_user=root
+ansible_python_interpreter=/usr/bin/python3
